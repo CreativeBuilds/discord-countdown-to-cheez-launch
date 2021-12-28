@@ -4,7 +4,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS] });
 const timeUntil = require('time-until');
 
 
-client.on('ready', () => {
+client.on('ready', async () => {
     UpdateStatus();
 
     setInterval(() => {
@@ -22,7 +22,7 @@ client.on('ready', () => {
         }
 
         // set discord status to "time until game release" with formatted date countdown using time-until package
-        client.user.setActivity("⏰: " + timeUntil(gameReleaseDate).string, { type: 'PLAYING' });
+        client.user.setActivity("Countdown ⏰: " + timeUntil(gameReleaseDate).string, { type: 'PLAYING' });
     }
 
 });
