@@ -81,10 +81,10 @@ async function sendMessage(newItems, channel) {
         .setColor('#FFD700')
         .setTitle(`New Sale${newItems.length > 1 ? "s" : ""}`)
 
-    for (let item of newItems) {
-        const buyer = item.admin.slice(0, 5) + "..." + item.admin.slice(-5);
-        const type = item.amount == 1 ? TYPES_SINGULAR[item.tokenId] : TYPES[item.tokenId];
-        embed.addField(`${item.amount}x ${type.slice(0,1).toUpperCase()+type.slice(1)} @ ${item.price/Math.pow(10,9)}  🧀  each!`, `Total: ${item.price/Math.pow(10,9)*item.amount} 🧀 - Bought by ${buyer}`)
+    for (let listing of newItems) {
+        const buyer = listing.admin.slice(0, 5) + "..." + listing.admin.slice(-5);
+        const type = listing.amount == 1 ? TYPES_SINGULAR[listing.tokenId] : TYPES[listing.tokenId];
+        embed.addField(`${listing.amount}x ${type.slice(0,1).toUpperCase()+type.slice(1)} @ ${listing.price/Math.pow(10,9)/listing.amount}  🧀  each!`, `Total: ${listing.price/Math.pow(10,9)} 🧀 - Bought by ${buyer}`)
     }
     await channel.send({embeds: [embed]});
     console.log("Posted new sale!");
@@ -94,8 +94,9 @@ client.on('ready', () => {
 
     // log newItems to console
     newItems.subscribe(async newItems => {
-        process.env.MARKET_ACTIVITY_CHANNEL_IDS.split(",").forEach(async channelId => {
-            const channel = client.channels.cache.get();
+        const commaSeperattedList = process.env.MARKET_ACTIVITY_CHANNEL_IDS.toString();
+        commaSeperattedList.split(",").forEach(async channelId => {
+            const channel = client.channels.cache.get(channelId);
             if(!channel) return console.warn("Can't find channel with id " + process.env.MARKET_ACTIVITY_CHANNEL_IDS);
             await sendMessage(newItems, channel)
         })
