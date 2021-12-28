@@ -84,7 +84,7 @@ async function sendMessage(newItems, channel) {
     for (let listing of newItems) {
         const buyer = listing.admin.slice(0, 5) + "..." + listing.admin.slice(-5);
         const type = listing.amount == 1 ? TYPES_SINGULAR[listing.tokenId] : TYPES[listing.tokenId];
-        embed.addField(`${listing.amount}x ${type.slice(0,1).toUpperCase()+type.slice(1)} @ ${listing.price/Math.pow(10,9)/listing.amount}  🧀  each!`, `Total: ${listing.price/Math.pow(10,9)} 🧀 - Bought by ${buyer}`)
+        embed.addField(`${listing.amount}x ${type.slice(0,1).toUpperCase()+type.slice(1)} @ ${listing.price/Math.pow(10,9)/listing.amount}  🧀  each!`, `Total: ${listing.price/Math.pow(10,9)} 🧀 - Bought by ${buyer}\n(5% Market Fee: ${(listing.price/Math.pow(10,9)*0.05).toFixed(3)} 🧀)`)
     }
     await channel.send({embeds: [embed]});
     console.log("Posted new sale!");
