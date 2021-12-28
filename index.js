@@ -5,19 +5,27 @@ const timeUntil = require('time-until');
 
 
 client.on('ready', () => {
+    UpdateStatus();
+
     setInterval(() => {
-        gameReleaseDate = new Date(2021, 12, 30, 12, 42, 42);
+        UpdateStatus(); 
+    }, 1000*60);
+
+    function UpdateStatus() {
+        const gameReleaseDate = new Date(2020, 11, 30, 12, 0, 0);
 
         // if gamereleasedate has passed, set status to offline
         if (gameReleaseDate < Date.now()) {
             client.user.setStatus('invisible');
             console.log('Game is launched, setting status to invisible');
             process.exit(0);
-        } 
+        }
 
         // set discord status to "time until game release" with formatted date countdown using time-until package
-        client.user.setActivity(`GAME RELEASE COUNTDOWN: ${timeUntil(gameReleaseDate).string}`, { type: 'STREAMING' }); 
-    }, 1000*60)
+        console.log(timeUntil(gameReleaseDate).string);
+        console.log(timeUntil(now).string);
+        client.user.setActivity("⏰: " + timeUntil(gameReleaseDate).string, { type: 'PLAYING' });
+    }
 
 });
 
