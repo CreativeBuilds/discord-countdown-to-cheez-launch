@@ -6,7 +6,7 @@ const timeUntil = require('time-until');
 
 
 const gameReleaseDate = new Date(2021, 11, 30, 12, 0, 0);
-const passReleaseDate = new Date(2022, 0, 3, 12, 0, 0);
+const passReleaseDate = new Date(2022, 0, 3, 20, 0, 0);
 client.on('ready', UpdateStatusCountdown(gameReleaseDate, false, client));
 client_pass.on('ready', UpdateStatusCountdown(passReleaseDate, true, client_pass));
 
