@@ -7,6 +7,7 @@ const rxjs = require('rxjs');
 const {switchMap, pairwise, filter} = require('rxjs/operators');
 const fetch = require('node-fetch');
 const lodash = require('lodash')
+const fs = require('fs');
 
 // with rxjs create observable that emits every minute
 const observable = rxjs.interval(1000 * 3);
@@ -75,6 +76,8 @@ const TYPES_SINGULAR = {
     2: "trap"
 }
 
+let totalFees = 0;
+
 // function to send message to channel with new items in a discord embed with a yellow color
 async function sendMessage(newItems, channel) {
     const embed = new Discord.MessageEmbed()
@@ -82,6 +85,27 @@ async function sendMessage(newItems, channel) {
         .setTitle(`New Sale${newItems.length > 1 ? "s" : ""}`)
 
     for (let listing of newItems) {
+
+        // if cheese-fees.txt doesn't exist, generate it
+        if (!fs.existsSync('./cheese-fees.txt')) {
+            fs.writeFileSync('./cheese-fees.txt', 6717+"");
+        }
+        // take 5% of the listing and add it to the number residing in cheese-fees.txt
+        const fee = listing.price/Math.pow(10,9) * 0.05;
+        fs.readFile('cheese-fees.txt', 'utf8', function (err, contents) {
+            if (err) {
+                return console.log(err);
+            }
+            totalFees = parseFloat(contents) + fee;
+
+            // update activity
+            client.user.setActivity(`(5% fees) ~${Math.floor(totalFees)} 🧀`, { type: 'WATCHING' });
+
+            fs.writeFile('cheese-fees.txt', totalFees.toString(), function (err) {
+                if (err) return console.log(err);
+            });
+        });
+
         const buyer = listing.admin.slice(0, 5) + "..." + listing.admin.slice(-5);
         const type = listing.amount == 1 ? TYPES_SINGULAR[listing.tokenId] : TYPES[listing.tokenId];
         embed.addField(`${listing.amount}x ${type.slice(0,1).toUpperCase()+type.slice(1)} @ ${listing.price/Math.pow(10,9)/listing.amount}  🧀  each!`, `Total: ${listing.price/Math.pow(10,9)} 🧀 - Bought by ${buyer}\n(5% Market Fee: ${(listing.price/Math.pow(10,9)*0.05).toFixed(3)} 🧀)`)
@@ -92,13 +116,27 @@ async function sendMessage(newItems, channel) {
 
 client.on('ready', () => {
 
+    if (!fs.existsSync('./cheese-fees.txt')) {
+        fs.writeFileSync('./cheese-fees.txt', 6717+"");
+    }
+
+    fs.readFile('cheese-fees.txt', 'utf8', function (err, contents) {
+        if (err) {
+            return console.log(err);
+        }
+        totalFees = parseFloat(contents);
+
+        // update activity
+        client.user.setActivity(`~${Math.floor(totalFees)} 🧀 from fees`, { type: 'WATCHING' });
+    });
+
     // log newItems to console
     newItems.subscribe(async newItems => {
         const commaSeperattedList = process.env.MARKET_ACTIVITY_CHANNEL_IDS.toString();
         commaSeperattedList.split(",").forEach(async channelId => {
             const channel = client.channels.cache.get(channelId);
             if(!channel) return console.warn("Can't find channel with id " + process.env.MARKET_ACTIVITY_CHANNEL_IDS);
-            await sendMessage(newItems, channel)
+            await sendMessage(newItems, channel);
         })
     })
 });
