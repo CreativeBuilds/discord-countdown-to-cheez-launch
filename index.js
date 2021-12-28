@@ -22,8 +22,7 @@ client.on('ready', () => {
         }
 
         // set discord status to "time until game release" with formatted date countdown using time-until package
-        console.log(timeUntil(gameReleaseDate).string);
-        let presence = client.user.setActivity("⏰: " + timeUntil(gameReleaseDate).string, { type: 'PLAYING' });
+        client.user.setActivity("⏰: " + timeUntil(gameReleaseDate).string, { type: 'PLAYING' });
     }
 
 });
