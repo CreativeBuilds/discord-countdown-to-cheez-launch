@@ -23,7 +23,7 @@ function UpdateStatusCountdown(endDate, ish, CLIENT) {
         UpdateStatus(endDate);
 
         setInterval(() => {
-            UpdateStatus();
+            UpdateStatus(endDate);
         }, 1000 * 60);
 
         function UpdateStatus(endDate) {
@@ -37,7 +37,7 @@ function UpdateStatusCountdown(endDate, ish, CLIENT) {
 
             // set discord status to "time until game release" with formatted date countdown using time-until package
             CLIENT.user.setActivity("Countdown ⏰: " + timeUntil(endDate).string, "ish", ish);
-            CLIENT.user.setActivity("Countdown ⏰: " + (ish ? "~" : "") +timeUntil(endDate).string + (ish ? "+" : ""), { type: 'PLAYING' });
+            CLIENT.user.setActivity("Countdown ⏰: " + (ish ? "(est.) " : "") +timeUntil(endDate).string + (ish ? "+" : ""), { type: 'PLAYING' });
         }
     };
 }
